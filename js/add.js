@@ -1,4 +1,4 @@
-/* ============ ADD ROW ============ */
+/* ===== ADD ROW ===== */
 function addRow() {
   const tbody = document.getElementById("itemsBody");
   const tr = document.createElement("tr");
@@ -22,7 +22,7 @@ function removeRow(btn) {
   calcTotal();
 }
 
-/* ============ CALC TOTAL ============ */
+/* ===== CALC TOTAL ===== */
 function calcTotal() {
   let sum = 0;
   document.querySelectorAll("#itemsBody tr").forEach(tr => {
@@ -32,10 +32,11 @@ function calcTotal() {
     tr.querySelector(".total").innerText = total.toLocaleString();
     sum += total;
   });
-  document.getElementById("grandTotal").innerText = sum.toLocaleString();
+  document.getElementById("grandTotal").innerText =
+    sum.toLocaleString();
 }
 
-/* ============ SAVE ============ */
+/* ===== SAVE ===== */
 async function saveInvoice() {
   if (!confirm("Bạn có chắc muốn lưu hóa đơn không?")) return;
 
@@ -72,18 +73,28 @@ async function saveInvoice() {
       body: form
     });
 
-    const result = await res.json();
-    if (!result.success) throw new Error(result.message);
+    const text = await res.text();
+    let result;
+
+    try {
+      result = JSON.parse(text);
+    } catch {
+      throw new Error("Response không hợp lệ: " + text);
+    }
+
+    if (!result.success) {
+      throw new Error(result.message);
+    }
 
     alert("✅ Đã lưu hóa đơn!");
     resetForm();
 
   } catch (err) {
-    alert("❌ Lỗi lưu:\n" + err.message);
+    alert("❌ Lỗi lưu hóa đơn:\n" + err.message);
   }
 }
 
-/* ============ RESET ============ */
+/* ===== RESET ===== */
 function resetForm() {
   document.getElementById("date").value = "";
   document.getElementById("note").value = "";
