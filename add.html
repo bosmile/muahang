@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nhập hóa đơn</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="top-bar">
+  <button onclick="history.back()">←</button>
+  <h1>Nhập hóa đơn mới</h1>
+</header>
+
+<section class="form-box">
+
+  <label>Phân loại</label>
+  <select id="category">
+    <option value="BIGC">BIGC</option>
+    <option value="SP_LZD">SP_LZD</option>
+    <option value="OTHER">Khác</option>
+  </select>
+
+  <label>Ngày mua</label>
+  <input type="date" id="date" />
+
+  <label>Ghi chú</label>
+  <input type="text" id="note" placeholder="Ví dụ: mua đồ gia đình" />
+
+  <h3>Chi tiết hàng hóa</h3>
+
+  <table class="item-table">
+    <thead>
+      <tr>
+        <th>Tên hàng</th>
+        <th>Số lượng</th>
+        <th>Đơn giá</th>
+        <th>Thành tiền</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="itemsBody"></tbody>
+  </table>
+
+  <button type="button" onclick="addRow()">+ Thêm hàng</button>
+
+  <div class="total-box">
+    Tổng tiền: <span id="grandTotal">0</span> đ
+  </div>
+
+   <button type="button" class="btn-primary" onclick="saveInvoice()">
+  Lưu hóa đơn
+  </button>
+
+
+</section>
+
+<script src="js/config.js"></script>
+<script src="js/add.js"></script>
+</body>
+</html>

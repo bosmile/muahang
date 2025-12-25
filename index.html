@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tổng hợp hóa đơn</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="top-bar">
+  <h1>Tổng hợp hóa đơn</h1>
+</header>
+
+<section class="summary-card">
+  <div class="summary-title">Tổng chi tiêu tháng</div>
+  <div class="summary-amount" id="totalMonth">0 đ</div>
+</section>
+
+<section class="filter-bar">
+  <select id="categoryFilter">
+    <option value="ALL">Phân loại: Tất cả</option>
+    <option value="BIGC">BIGC</option>
+    <option value="SP_LZD">SP_LZD</option>
+    <option value="OTHER">Khác</option>
+  </select>
+
+  <button onclick="location.href='add.html'" class="btn-primary">
+    + Nhập hóa đơn
+  </button>
+</section>
+
+<section class="invoice-list" id="invoiceList">
+  <!-- Render hóa đơn -->
+</section>
+
+<script src="js/config.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
