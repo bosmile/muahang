@@ -1,81 +1,60 @@
-/* =========================
-   ADD ROW
-========================= */
+/* ============ ADD ROW ============ */
 function addRow() {
   const tbody = document.getElementById("itemsBody");
   const tr = document.createElement("tr");
 
   tr.innerHTML = `
-    <td><input type="text" class="name" placeholder="Tên hàng"></td>
+    <td><input class="name" placeholder="Tên hàng"></td>
     <td><input type="number" class="qty" value="1" min="1"></td>
     <td><input type="number" class="price" value="0" min="0"></td>
     <td class="total">0</td>
-    <td>
-      <button type="button" onclick="removeRow(this)">❌</button>
-    </td>
+    <td><button type="button" onclick="removeRow(this)">❌</button></td>
   `;
 
   tbody.appendChild(tr);
-
-  tr.querySelector(".qty").addEventListener("input", calcTotal);
-  tr.querySelector(".price").addEventListener("input", calcTotal);
-
+  tr.querySelector(".qty").oninput = calcTotal;
+  tr.querySelector(".price").oninput = calcTotal;
   calcTotal();
 }
 
-/* =========================
-   REMOVE ROW
-========================= */
 function removeRow(btn) {
   btn.closest("tr").remove();
   calcTotal();
 }
 
-/* =========================
-   CALCULATE TOTAL
-========================= */
+/* ============ CALC TOTAL ============ */
 function calcTotal() {
   let sum = 0;
-
   document.querySelectorAll("#itemsBody tr").forEach(tr => {
-    const qty = Number(tr.querySelector(".qty").value) || 0;
-    const price = Number(tr.querySelector(".price").value) || 0;
+    const qty = +tr.querySelector(".qty").value || 0;
+    const price = +tr.querySelector(".price").value || 0;
     const total = qty * price;
-
     tr.querySelector(".total").innerText = total.toLocaleString();
     sum += total;
   });
-
-  document.getElementById("grandTotal").innerText =
-    sum.toLocaleString();
+  document.getElementById("grandTotal").innerText = sum.toLocaleString();
 }
 
-/* =========================
-   SAVE INVOICE
-========================= */
+/* ============ SAVE ============ */
 async function saveInvoice() {
-  const ok = confirm("Bạn có chắc muốn lưu hóa đơn không?");
-  if (!ok) return;
+  if (!confirm("Bạn có chắc muốn lưu hóa đơn không?")) return;
 
   const rows = document.querySelectorAll("#itemsBody tr");
-  if (rows.length === 0) {
-    alert("Chưa có hàng hóa nào");
-    return;
-  }
+  if (!rows.length) return alert("Chưa có hàng hóa");
 
   const items = [];
   rows.forEach(tr => {
     items.push({
       name: tr.querySelector(".name").value,
-      quantity: Number(tr.querySelector(".qty").value),
-      price: Number(tr.querySelector(".price").value),
+      quantity: tr.querySelector(".qty").value,
+      price: tr.querySelector(".price").value,
       total:
-        Number(tr.querySelector(".qty").value) *
-        Number(tr.querySelector(".price").value)
+        tr.querySelector(".qty").value *
+        tr.querySelector(".price").value
     });
   });
 
-  const data = {
+  const payload = {
     invoice_id: "HD_" + Date.now(),
     date: document.getElementById("date").value,
     category: document.getElementById("category").value,
@@ -84,48 +63,35 @@ async function saveInvoice() {
     items
   };
 
+  const form = new URLSearchParams();
+  form.append("data", JSON.stringify(payload));
+
   try {
     const res = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+      body: form
     });
 
-    if (!res.ok) {
-      throw new Error("Không kết nối được Google Apps Script");
-    }
-
     const result = await res.json();
-
-    if (!result.success) {
-      throw new Error(result.message || "Lưu thất bại");
-    }
+    if (!result.success) throw new Error(result.message);
 
     alert("✅ Đã lưu hóa đơn!");
     resetForm();
 
   } catch (err) {
-    alert("❌ Lỗi khi lưu hóa đơn:\n" + err.message);
+    alert("❌ Lỗi lưu:\n" + err.message);
   }
 }
 
-/* =========================
-   RESET FORM AFTER SAVE
-========================= */
+/* ============ RESET ============ */
 function resetForm() {
   document.getElementById("date").value = "";
   document.getElementById("note").value = "";
   document.getElementById("category").value = "BIGC";
-
   document.getElementById("itemsBody").innerHTML = "";
   document.getElementById("grandTotal").innerText = "0";
-
   addRow();
 }
 
-/* =========================
-   INIT
-========================= */
+/* INIT */
 addRow();
